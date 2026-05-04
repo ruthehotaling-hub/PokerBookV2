@@ -1,0 +1,607 @@
+---
+title: "Tournament Dynamics Beyond ICM"
+chapter-id: "ch21"
+part: "Multi-Player and Tournament Structure"
+poker-topics:
+  - "19 Tournament vs Cash Incentives"
+  - "20 ICM and Nonlinear Utility"
+---
+::: {.callout-note}
+**Chapter at a glance**
+
+- **Part:** Part VI: Multi-Player and Tournament Structure
+- **Poker topics:** 19 Tournament vs Cash Incentives, 20 ICM and Nonlinear Utility
+- **Beyond poker:** investing, insurance, biology: risk-sensitive foraging
+
+:::
+
+# Motivating Example
+
+You are deep in a poker tournament. The blinds are increasing, and every decision carries significant weight. You have 18 big blinds remaining—enough to still maneuver, but not enough to play passively.
+
+You are dealt Ace-Queen offsuit in middle position. You raise, and only the big blind calls. The flop comes:
+
+$Q\spadesuit$ $7\diamondsuit$ $2\clubsuit$
+
+You have top pair with a strong kicker. The pot is 6 big blinds.
+
+Your opponent checks.
+
+At first glance, this seems straightforward—you likely have the best hand. But the situation is more complicated than it appears.
+
+If you bet and your opponent folds, you win the pot immediately. If they call, you must consider how your hand performs against their possible range. If they check-raise all-in, you are suddenly facing a tournament-defining decision: call and risk elimination, or fold and preserve your remaining chips.
+
+Suppose your opponent shoves all-in for your remaining 15 big blinds after your bet. The pot now offers you favorable odds—but only if your hand has enough equity against their range.
+
+Now the key question emerges:
+
+**How strong does your hand need to justify calling?**
+
+Answering this is not about intuition alone. It requires translating the situation into mathematics:
+
+  - What are the pot odds you are being offered?
+  
+  - How do you quantify your probability of winning (your equity)?
+  
+  - How do these quantities determine whether calling is profitable?
+
+Even more subtly, this decision is not just about chips—it is about survival in a tournament. Losing all your chips has a different consequence than losing the same number in a cash game.
+
+This example reveals a deeper mathematical problem at the heart of poker:
+
+How can we model decision-making under uncertainty, where outcomes depend on both probability and strategic interaction?
+
+To answer this, we need tools from probability, expected value, and game theory. These tools will allow us to move beyond intuition and make decisions that are mathematically justified—even in high-pressure, uncertain situations.
+---
+
+# Mathematical Framework and Poker Theory
+
+---
+
+## Definitions and Setup
+
+We model a tournament with $n$ players and a fixed payout structure determined by finishing position. Let  
+
+- $c_i \in \mathbb{R}_+$ denote the chip stack of player $i$,  
+
+- $\mathbf{c} = (c_1, \dots, c_n)$ denote the full vector of chip stacks,  
+
+- $\mathbf{c}_{-i}$ denote the vector of all stacks except player $i$'s.
+
+Let
+$$U_i(\mathbf{c})$$
+denote the **tournament utility** of player $i$, defined as their expected monetary payout given the current stack configuration.
+
+Unlike in cash games, this utility depends on relative position rather than absolute chip counts.
+
+### Types of Utility Functions
+
+- Linear: $U_i(c_i) = c_i$  
+- Payout-based (ICM-style)  
+- Future game simulation  
+- **Skill-weighted utility (used in this chapter)**  
+
+### Skill-Weighted Utility Model
+
+We define skill weights $s_i > 0$ and model:
+$$P_i(\text{1st}) = \frac{s_i c_i}{\sum_j s_j c_j}$$
+
+$$U_i(\mathbf{c}) = \sum_k P_i(k)\cdot \text{Payout}_k$$
+
+## Running Example
+
+We use a consistent example throughout the chapter.
+
+- 3 players  
+- Payouts: $(100, 60, 0)$  
+- Stacks:
+$$\mathbf{c} = (40, 35, 25)$$
+
+- Skill weights:
+$$s_1 = 1.3,\quad s_2 = 1.0,\quad s_3 = 0.9$$
+
+Compute:
+$$\sum s_j c_j = 109.5$$
+
+$$P_1(\text{1st}) \approx 0.475$$
+
+Approximate:
+$$P_1(\text{2nd}) \approx 0.35$$
+
+Thus:
+$$U_1(\mathbf{c}) \approx 68.5$$
+
+### Definition 1 (Nonlinear Utility Function)
+
+---
+
+**Definition.** A nonlinear utility function is a function
+$$U_i : \mathbb{R}_+^n \to \mathbb{R}$$
+such that the change in utility from gaining chips depends on the current stack size and the stacks of other players.
+
+Formally, for $\Delta > 0$,
+$$U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})$$
+is not constant in $c_i$.
+
+#### Explanation of Components
+
+- $U_i(\mathbf{c})$: expected payout of player $i$  
+- $c_i$: player $i$'s chip stack  
+- $\mathbf{c}_{-i}$: opponents’ stacks  
+- $\Delta$: change in chips  
+
+#### Interpretation
+
+In a linear system (such as a cash game), each chip has constant value:
+$$U_i(c_i + \Delta) - U_i(c_i) = \text{constant}.$$
+
+In tournaments, this is not true. For example:
+
+- Increasing from a short stack significantly improves survival probability 
+
+- Increasing an already large stack produces only a small gain in expected payout 
+
+This implies diminishing marginal returns, typically expressed as
+$$\frac{\partial^2 U_i}{\partial c_i^2} < 0.$$
+
+#### Running Example Application
+In our 3-player setup, if Player 3 (25 chips) gains $\Delta = 5$ chips from Player 1, their utility $U_3$ increases more significantly than if Player 1 (40 chips) gained those same 5 chips. The "value" of those 5 chips is not inherent to the chips themselves, but to who receives them and their current standing.
+
+### Definition 2 (Risk Premium)
+
+---
+
+**Definition.** Let $X$ be a random variable representing a change in player $i$'s chip stack. The risk premium $\pi$ is defined implicitly by
+$$U_i(\mathbb{E}[c_i + X] - \pi, \mathbf{c}_{-i}) = \mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})].$$
+
+#### Explanation of Components
+
+- $X$: random chip outcome (e.g., $+\Delta$ or $-\Delta$)  
+- $\mathbb{E}[c_i + X]$: expected chip stack after the gamble  
+- $\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})]$: expected tournament utility  
+- $\pi$: amount of chips the player would give up to avoid risk  
+
+#### Interpretation
+
+The risk premium measures how much a player dislikes uncertainty.
+
+- If $\pi = 0$, the player is risk-neutral  
+- If $\pi > 0$, the player is risk-averse  
+
+In tournaments, risk aversion arises because losing chips can lead to elimination, while gaining chips often provides limited additional benefit.
+
+#### Running Example Application
+If Player 2 (35 chips) faces a coinflip for 10 chips against Player 3, the $\mathbb{E}[c_2+X]$ is 35 chips. However, the expected utility of that gamble is lower than $U_2(35)$. The difference in chips, $\pi$, represents how much Player 2 would pay to simply cancel the bet and keep their 35 chips.
+
+### Definition 3 (Bubble Factor)
+
+---
+
+**Definition.** For $\Delta > 0$, the bubble factor for player $i$ is
+$$B_i(\mathbf{c}, \Delta) = \frac{U_i(c_i, \mathbf{c}_{-i}) - U_i(c_i - \Delta, \mathbf{c}_{-i})}{U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})}.$$
+
+#### Explanation of Components
+
+The numerator represents the utility lost when chips are lost.
+The denominator represents the utility gained when chips are won.
+
+#### Interpretation
+
+- $B_i > 1$: losing chips is more costly than gaining chips is beneficial  
+- $B_i = 1$: symmetric value (cash-game case)  
+- $B_i \gg 1$: strong risk aversion (e.g., near payout thresholds)  
+
+This ratio captures how tournament incentives distort decision-making.
+
+#### Running Example Application
+If Player 3 (25 chips) risks $\Delta = 25$ chips against Player 1, the numerator is $U_3(25) - U_3(0)$ (the cost of elimination). The denominator is $U_3(50) - U_3(25)$ (the gain from doubling). Since $U_3$ is concave, the numerator is larger than the denominator, resulting in $B_3 > 1$.
+
+### Connecting the Definitions
+
+These concepts are closely related.
+
+- Nonlinear utility creates diminishing marginal returns  
+- Diminishing returns lead to risk aversion  
+- Risk aversion is quantified by the risk premium  
+- The bubble factor measures the asymmetry between gains and losses  
+
+Together, they imply that chip value depends on both stack size and tournament context.
+
+Now, let's look at a theorem that will reinforce the main mathematical definitions:
+
+### Theorem 1 (Concavity Implies Risk Aversion)
+
+---
+
+**Theorem.** Suppose the tournament utility function $U_i(c_i, \mathbf{c}_{-i})$ is concave in $c_i$, i.e.,
+$$
+\frac{\partial^2 U_i}{\partial c_i^2}(\mathbf{c}) < 0.
+$$
+Let $X$ be any random variable with $\mathbb{E}[X] = 0$. Then,
+$$
+\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})] \leq U_i(c_i, \mathbf{c}_{-i}),
+$$
+with strict inequality if $X$ is non-degenerate.
+
+---
+
+**Proof.** Since $U_i$ is concave in $c_i$, Jensen’s Inequality implies:
+$$
+\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})]
+\leq
+U_i(\mathbb{E}[c_i + X], \mathbf{c}_{-i}).
+$$
+
+Because $\mathbb{E}[X] = 0$, we have:
+$$
+\mathbb{E}[c_i + X] = c_i.
+$$
+
+Thus,
+$$
+\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})]
+\leq
+U_i(c_i, \mathbf{c}_{-i}).
+$$
+
+If $X$ has positive variance, the inequality is strict. $\square$
+
+---
+
+**Interpretation.**
+
+This theorem formalizes risk aversion in tournament poker:
+
+- A “fair” gamble in chips ($\mathbb{E}[X] = 0$) reduces expected utility  
+- Players prefer certainty over risk  
+- This directly implies a positive risk premium:
+$$
+\pi > 0
+$$
+
+---
+
+**Connection to Poker.**
+
+This result explains why:
+
+- Players fold hands that are profitable in chip-EV  
+- Bubble Factor satisfies $B_i > 1$  
+- Tournament strategy deviates from cash-game logic  
+
+In short, concavity of $U_i$ is the mathematical reason tournament players avoid marginal gambles.
+
+## Main Mathematical Development
+
+---
+
+### Subsection A: Marginal Value of Chips
+
+A central feature of tournament poker is that the value of an additional chip is not constant. Instead, it depends on both a player’s current stack and the distribution of chips across all players.
+
+### Definition (Marginal Value of Chips)
+
+The **marginal value of chips** for player $i$ is defined as the rate at which tournament utility changes with respect to their chip stack:
+$$\frac{\partial U_i}{\partial c_i}(\mathbf{c}).$$
+
+This quantity measures how much a small increase in chips improves a player’s expected payout.
+
+#### Running Example Application
+Using our skill-weighted model, we can calculate that for Player 3 ($\mathbf{c}_3=25$), the derivative $\frac{\partial U_3}{\partial c_3}$ is higher than $\frac{\partial U_1}{\partial c_1}$. This mathematically demonstrates that Player 3 "needs" the chips more to improve their tournament outlook than the chip leader.
+
+---
+
+### Interpretation of the Derivative
+
+- If $\frac{\partial U_i}{\partial c_i}$ is large, gaining chips significantly increases expected payout  
+- If $\frac{\partial U_i}{\partial c_i}$ is small, additional chips provide little benefit  
+
+Thus, the derivative captures the **local value of chips** at a given stack size.
+
+---
+
+### Key Property: Diminishing Marginal Value
+
+In tournament settings, utility is typically concave in $c_i$, meaning:
+$$\frac{\partial^2 U_i}{\partial c_i^2}(\mathbf{c}) < 0.$$
+
+This implies that:
+- The first chips a player gains are very valuable  
+- Each additional chip contributes less than the previous one  
+
+#### Example (Qualitative)
+
+- A player with a very short stack gains substantial survival probability from doubling up  
+- A chip leader gains relatively little from increasing an already dominant stack  
+
+---
+
+### Dependence on Stack Distribution
+
+Unlike standard economic models, the marginal value of chips depends not only on $c_i$, but on the entire vector $\mathbf{c}$:
+$$\frac{\partial U_i}{\partial c_i}(\mathbf{c}) = f(c_1, c_2, \dots, c_n).$$
+
+#### Running Example Application
+If Player 3's stack remains 25, but Player 2 loses chips to Player 1, Player 3's marginal value of chips changes. Even though $c_3$ is constant, the shift in $\mathbf{c}_{-3}$ alters Player 3's probability of laddering up to 2nd place, thus shifting their utility derivative.
+
+---
+
+### Discrete Approximation
+
+Since chips change in discrete amounts, the marginal value is often approximated by:
+$$U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i}),$$
+for small $\Delta > 0$.
+
+### Relation to Risk and Bubble Factor
+
+The marginal value of chips directly influences both risk premium and bubble factor:
+
+- When marginal value is high (short stacks), players are incentivized to take risks  
+- When marginal value is low (large stacks), players can apply pressure  
+- When losing chips significantly reduces marginal utility, the bubble factor increases  
+
+---
+
+### Result
+
+The marginal value of chips depends on the stack distribution:
+$$\frac{\partial U_i}{\partial c_i}(\mathbf{c}) \text{ varies with both } c_i \text{ and } \mathbf{c}_{-i}.$$
+
+---
+
+### Implication for Strategy
+
+Because marginal chip value is not constant:
+
+- Decisions that maximize expected chips may not maximize expected payout 
+- Players must account for how chips translate into finishing probabilities 
+- Optimal play requires evaluating changes in utility, not just chip counts 
+
+### Subsection B: Tournament EV vs Chip EV
+
+## Tournament Expected Value vs. Chip Expected Value
+
+A central distinction in tournament poker is the difference between **chip expected value** and **tournament expected value**. While chip expected value measures gains and losses in chips, tournament expected value measures changes in expected payout.
+
+---
+
+### Definition (Chip Expected Value)
+
+Consider a gamble in which player $i$ wins $\Delta > 0$ chips with probability $p$ and loses $\Delta$ chips with probability $1 - p$.
+
+The **chip expected value** (chip-EV) of this gamble is
+$$\mathrm{EV}_{\text{chips}} = p \cdot \Delta + (1 - p)(-\Delta) = (2p - 1)\Delta.$$
+
+#### Interpretation
+
+- $\mathrm{EV}_{\text{chips}} > 0$: the gamble is profitable in chips  
+- $\mathrm{EV}_{\text{chips}} = 0$: the gamble is fair  
+- $\mathrm{EV}_{\text{chips}} < 0$: the gamble loses chips on average  
+
+---
+
+### Definition (Tournament Expected Value)
+
+The **tournament expected value** (tournament-EV) evaluates the same gamble using the utility function $U_i$:
+$$\mathrm{EV}_{\text{tourn}} = p \cdot U_i(c_i + \Delta, \mathbf{c}_{-i}) + (1 - p) \cdot U_i(c_i - \Delta, \mathbf{c}_{-i}) - U_i(\mathbf{c}).$$
+
+#### Running Example Application
+Suppose Player 2 (35 chips) takes a 10-chip flip against Player 3 with $p=0.51$.
+$\mathrm{EV}_{\text{chips}} = (0.51)(10) + (0.49)(-10) = +0.2$ chips.
+However, if we calculate $\mathrm{EV}_{\text{tourn}}$, we might find it is negative (e.g., $-\$0.50$) because the utility lost from dropping to 25 chips outweighs the utility gained from rising to 45 chips.
+
+---
+
+### Key Difference
+
+Chip-EV assumes linear utility: $U_i(c_i) = c_i$, while tournament-EV uses a nonlinear utility function. Because of this, $\mathbb{E}[U_i(c_i + X)] \neq U_i(\mathbb{E}[c_i + X])$.
+
+---
+
+### Role of the Bubble Factor
+
+Using the bubble factor, we can rewrite the decision condition. A player should accept the gamble only if:
+$$\frac{p}{1 - p} \geq B_i(\mathbf{c}, \Delta).$$
+
+#### Running Example Application
+If Player 2's $B_2$ for a 10-chip gamble is 1.2, then they need odds of $\frac{p}{1-p} \geq 1.2$. This means $p \geq 54.5\%$. Even though $p=51\%$ is positive chip-EV, it is a fold in tournament-EV.
+
+### Subsection C: All-In Decision Thresholds
+
+A fundamental application of tournament utility is determining whether a player should accept an all-in gamble.
+
+---
+
+### Setup
+
+Consider a binary gamble faced by player $i$:
+- With probability $p$, player $i$ wins $\Delta > 0$ chips 
+- With probability $1 - p$, player $i$ loses $\Delta$ chips 
+
+Let $\mathbf{c}_{-i}$ denote the fixed chip stacks of all other players.
+
+---
+
+### Tournament Decision Condition
+
+Similar to the previous section, we know the player should accept the gamble if and only if $\mathrm{EV}_{\text{tourn}} \geq 0$.
+
+---
+
+### Solving for the Critical Probability
+
+Now, we derive the decision condition from the previous section.
+
+We begin with the tournament expected value condition:
+
+$$
+p \cdot U_i(c_i + \Delta, \mathbf{c}_{-i}) + (1 - p)\cdot U_i(c_i - \Delta, \mathbf{c}_{-i}) \geq U_i(\mathbf{c})
+$$
+
+Rewriting by subtracting $U_i(\mathbf{c})$ from both sides:
+
+$$
+p \big(U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})\big)
+\geq
+(1 - p)\big(U_i(c_i, \mathbf{c}_{-i}) - U_i(c_i - \Delta, \mathbf{c}_{-i})\big)
+$$
+
+Dividing both sides by $1 - p$ (assuming $p < 1$):
+
+$$
+\frac{p}{1 - p}
+\geq
+\frac{U_i(c_i, \mathbf{c}_{-i}) - U_i(c_i - \Delta, \mathbf{c}_{-i})}
+{U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})}
+$$
+
+Recognizing the bubble factor:
+
+$$
+\frac{p}{1 - p} \geq B_i(\mathbf{c}, \Delta)
+$$
+
+Solving for $p$:
+
+$$
+p \geq \frac{B_i(\mathbf{c}, \Delta)}{1 + B_i(\mathbf{c}, \Delta)}
+$$
+
+This expression gives the minimum probability of winning required for a gamble to be profitable in tournament expected value.
+
+#### Running Example Application
+For Player 3 (25 chips) facing an all-in for their whole stack, if their Bubble Factor $B_3$ is 1.1, their critical probability is $p \geq 1.1/2.1 \approx 52.4\%$. Any hand with equity less than 52.4% must be folded, even if the pot odds suggest a call in a cash game.
+
+---
+
+### Strategic Meaning
+
+This result formalizes how tournament incentives distort standard pot-odds reasoning. As a result, players near payout thresholds must demand significantly better odds than in cash games.
+
+---
+
+### Insight
+
+The bubble factor acts as a multiplier on required equity:
+$$\text{Required Equity} = \frac{B_i}{1 + B_i}.$$
+
+## Poker Connection
+
+The mathematical framework developed in this chapter directly explains several fundamental features of tournament poker strategy.
+
+### Tournament Decisions and Stack Pressure
+
+The concept of nonlinear utility explains why identical chip situations can lead to different decisions.
+- **Short stacks** (like Player 3) have high marginal utility for chips but must balance this against a high Bubble Factor regarding elimination.
+- **Medium stacks** (like Player 2) often face the highest Bubble Factors, as they have the most "to lose" by falling into the short-stack or eliminated category.
+- **Chip leaders** (like Player 1) have the lowest marginal utility but can use their stack to force high-Bubble-Factor decisions on others.
+
+### All-In Decisions as Utility Thresholds
+
+The all-in decision framework derived earlier translates directly into real poker situations. Instead of comparing raw chip equity, players must compare $\mathrm{EV}_{\text{tourn}}$.
+
+### Key Insight
+
+Tournament poker cannot be fully understood through chip arithmetic alone. Instead, every decision reflects changes in a nonlinear utility landscape shaped by stack sizes, opponent distributions, and payout structure.
+
+
+# Beyond Poker
+
+---
+
+The mathematical frameworks developed in this chapter—specifically the **Bubble Factor** and **Diminishing Marginal Utility**—are not unique to card games. They are central to any system where resources are finite, outcomes are discrete, and "elimination" carries a terminal cost.
+
+## 1. Economics: The Logic of Insurance
+
+In classical economics, the utility of wealth is modeled as a concave function. For an individual, the "cost" of losing $50,000 (bankruptcy) is mathematically greater than the "benefit" of gaining $50,000. 
+
+### Calculation: The Risk Premium in Practice
+Imagine an individual with a net worth of **$100,000** and a logarithmic utility function $U(W) = \ln(W)$. They face a **1%** chance of a catastrophic **$80,000** loss (e.g., a house fire).
+
+**Step 1: Calculate Expected Utility without Insurance**
+$$E[U] = (0.99 \cdot \ln(100,000)) + (0.01 \cdot \ln(20,000))$$
+$$E[U] = (0.99 \cdot 11.5129) + (0.01 \cdot 9.9035) \approx 11.4968$$
+
+**Step 2: Find the Certainty Equivalent (CE)**
+The Certainty Equivalent is the amount of guaranteed wealth that provides the same utility as the risky gamble:
+$$\ln(CE) = 11.4968 \implies CE = e^{11.4968} \approx \$98,400$$
+
+**Step 3: Determine the Maximum Premium**
+The individual is indifferent between facing the risk and having **$98,400** for sure. Therefore, the maximum they would pay for insurance is:
+$$\$100,000 - \$98,400 = \$1,600$$
+
+**The Result:** Even though the **Expected Loss** is only **$800** ($80,000 \times 0.01$), the individual is willing to pay up to **$1,600**. The extra **$800** is the **Risk Premium** ($\pi$), which is mathematically identical to the "Tournament-EV" tax a poker player pays to avoid the bubble.
+
+## 2. Biology: Risk-Sensitive Foraging
+
+In evolutionary biology, an animal's survival follows a tournament structure. Biologists use the **Z-Score Model of Starvation** to predict when animals will take risks.
+
+$$Z = \frac{E[R] - T}{\sigma_R}$$
+
+Where:
+- $E[R]$ = Expected daily calorie reward
+- $T$ = Starvation threshold (The "Elimination" point)
+- $\sigma_R$ = Variance of the food source
+
+### The "Short Stack" Strategy
+If a bird needs **500 calories** to survive the night but only has access to a guaranteed source of **400 calories**, its survival probability is 0%. 
+
+In this "Short Stack" situation, the animal will switch from a low-variance diet to a **high-variance** diet (e.g., hunting dangerous prey), even if the expected calorie count is lower. This is the biological equivalent of a short stack "shoving" all-in: when the status quo leads to certain elimination, the marginal utility of variance becomes positive.
+
+## 3. Comparative Framework
+
+| Concept | Poker Tournament | Personal Finance | Biology (Foraging) |
+| :--- | :--- | :--- | :--- |
+| **"Chips"** | Tournament Chips | Net Worth / Cash | Calories / Fat Reserves |
+| **"Elimination"** | Busting the Tourney | Bankruptcy / Poverty | Starvation / Death |
+| **"Payout"** | Prize Money | Retirement / Security | Reproduction / Survival |
+| **"Bubble Factor"** | Payout Jump-points | Insurance Needs | Winter / Scarcity |
+
+# Homework Problems
+
+---
+
+These problems explore the theoretical foundations of nonlinear utility and risk independently of the specific running examples used in the text.
+
+##### 1. Conceptual: The "Winner-Take-All" Paradox
+Consider a "Winner-Take-All" tournament structure where 100% of the prize pool is awarded to 1st place and $0 to all other positions.
+*   **Problem:** Mathematically demonstrate whether the utility function $U_i(c_i)$ in this specific tournament structure is linear or nonlinear. 
+*   **Discussion:** If $U_i$ is linear, what does that imply about a player's **Bubble Factor** and their optimal strategy compared to a standard cash game?
+
+##### 2. Computational: The Sunk Cost of Elimination
+A player is on the direct "bubble" of a tournament (the next player eliminated receives $0, while everyone remaining is guaranteed at least $1,000). 
+*   **Scenario:** The player has 10 chips and faces an all-in bet for their entire stack.
+    *   Utility if they fold: $U(10\text{ chips}) = \$1,050$
+    *   Utility if they win (20 chips): $U(20\text{ chips}) = \$1,100$
+    *   Utility if they lose (0 chips): $U(0\text{ chips}) = \$0$
+*   **Task:** Calculate the **Bubble Factor** ($B_i$) for this decision. What is the minimum equity ($p$) required for this player to justify a call?
+
+##### 3. Proof: Concavity and the Risk Premium
+Assume a player has a utility function defined by the square root of their chip stack: $U(c) = \sqrt{c}$.
+*   **Task:** 
+    1. Prove that this utility function is concave by calculating the second derivative $U''(c)$.
+    2. If a player with 100 chips is offered a fair coinflip ($p=0.5$) for 64 chips (resulting in either 36 or 164 chips), calculate the **Risk Premium** ($\pi$) they would be willing to pay in chips to avoid this gamble entirely.
+
+##### 4. Interpretation: The "Big Stack" Utility Shift
+In many tournament models, a player’s utility increases sharply when moving from a "short stack" to a "medium stack," but the rate of increase plateaus once they become the dominant "chip leader."
+*   **Task:** Sketch a qualitative graph of $U(c)$ where the x-axis represents chips and the y-axis represents tournament utility. 
+*   **Question:** On your graph, identify the region where the **Marginal Value of Chips** is highest. Why does this region usually correspond to the "survival" phase of a tournament?
+
+##### 5. Beyond Poker: Insurance and Certainty Equivalents
+An individual has a net worth of $100,000. There is a 1% chance of a disaster that would reduce their net worth to $20,000 (a loss of $80,000).
+*   **Scenario:** An insurance company offers a policy covering the full $80,000 loss for a premium of $1,200.
+*   **Task:** 
+    1. Calculate the **Expected Value** (in raw dollars) of buying the insurance. Is the dollar-EV positive or negative?
+    2. Using a logarithmic utility function $U(w) = \ln(w)$, determine if the individual should buy the insurance based on expected utility. 
+    3. Explain how this result relates to the **Tournament-EV** concepts discussed in this chapter.
+    
+## AI Collaboration Log
+
+| Task | How AI Was Used | What the Group Revised or Verified |
+|---|---|---|
+| Definitions | Asked AI to draft candidate definitions, and explain results and insight | Reviewed wording and checked against book notation |
+| Definition expansion | Asked AI to expand on definitions and draft interpretations | Verified notation and correctness |
+| Additional subsection | Drafted additional subsection | Verified notation and correctness |
+| Motivating Example | Drafted motivating example | Reviewed wording and logic in the chapter's context | 
+| Running Example | Asked AI to create a running example throughout the chapter | Reviewed wording and notation | 
+| Beyond Poker | Drafted Beyond Poker examples | Verified logic and notation

@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Tournament Dynamics Beyond ICM</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="21-tournament_dynamics_beyond_icm_files/libs/clipboard/clipboard.min.js"></script>
+<script src="21-tournament_dynamics_beyond_icm_files/libs/quarto-html/quarto.js"></script>
+<script src="21-tournament_dynamics_beyond_icm_files/libs/quarto-html/popper.min.js"></script>
+<script src="21-tournament_dynamics_beyond_icm_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="21-tournament_dynamics_beyond_icm_files/libs/quarto-html/anchor.min.js"></script>
+<link href="21-tournament_dynamics_beyond_icm_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="21-tournament_dynamics_beyond_icm_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="21-tournament_dynamics_beyond_icm_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="21-tournament_dynamics_beyond_icm_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="21-tournament_dynamics_beyond_icm_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Tournament Dynamics Beyond ICM</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>Chapter at a glance</strong></p>
+<ul>
+<li><strong>Part:</strong> Part VI: Multi-Player and Tournament Structure</li>
+<li><strong>Poker topics:</strong> 19 Tournament vs Cash Incentives, 20 ICM and Nonlinear Utility</li>
+<li><strong>Beyond poker:</strong> investing, insurance, biology: risk-sensitive foraging</li>
+</ul>
+</div>
+</div>
+<section id="motivating-example" class="level1">
+<h1>Motivating Example</h1>
+<p>You are deep in a poker tournament. The blinds are increasing, and every decision carries significant weight. You have 18 big blinds remaining—enough to still maneuver, but not enough to play passively.</p>
+<p>You are dealt Ace-Queen offsuit in middle position. You raise, and only the big blind calls. The flop comes:</p>
+<p><span class="math inline">\(Q\spadesuit\)</span> <span class="math inline">\(7\diamondsuit\)</span> <span class="math inline">\(2\clubsuit\)</span></p>
+<p>You have top pair with a strong kicker. The pot is 6 big blinds.</p>
+<p>Your opponent checks.</p>
+<p>At first glance, this seems straightforward—you likely have the best hand. But the situation is more complicated than it appears.</p>
+<p>If you bet and your opponent folds, you win the pot immediately. If they call, you must consider how your hand performs against their possible range. If they check-raise all-in, you are suddenly facing a tournament-defining decision: call and risk elimination, or fold and preserve your remaining chips.</p>
+<p>Suppose your opponent shoves all-in for your remaining 15 big blinds after your bet. The pot now offers you favorable odds—but only if your hand has enough equity against their range.</p>
+<p>Now the key question emerges:</p>
+<p><strong>How strong does your hand need to justify calling?</strong></p>
+<p>Answering this is not about intuition alone. It requires translating the situation into mathematics:</p>
+<ul>
+<li><p>What are the pot odds you are being offered?</p></li>
+<li><p>How do you quantify your probability of winning (your equity)?</p></li>
+<li><p>How do these quantities determine whether calling is profitable?</p></li>
+</ul>
+<p>Even more subtly, this decision is not just about chips—it is about survival in a tournament. Losing all your chips has a different consequence than losing the same number in a cash game.</p>
+<p>This example reveals a deeper mathematical problem at the heart of poker:</p>
+<p>How can we model decision-making under uncertainty, where outcomes depend on both probability and strategic interaction?</p>
+<p>To answer this, we need tools from probability, expected value, and game theory. These tools will allow us to move beyond intuition and make decisions that are mathematically justified—even in high-pressure, uncertain situations.</p>
+<hr>
+</section>
+<section id="mathematical-framework-and-poker-theory" class="level1">
+<h1>Mathematical Framework and Poker Theory</h1>
+<hr>
+<section id="definitions-and-setup" class="level2">
+<h2 class="anchored" data-anchor-id="definitions-and-setup">Definitions and Setup</h2>
+<p>We model a tournament with <span class="math inline">\(n\)</span> players and a fixed payout structure determined by finishing position. Let</p>
+<ul>
+<li><p><span class="math inline">\(c_i \in \mathbb{R}_+\)</span> denote the chip stack of player <span class="math inline">\(i\)</span>,</p></li>
+<li><p><span class="math inline">\(\mathbf{c} = (c_1, \dots, c_n)\)</span> denote the full vector of chip stacks,</p></li>
+<li><p><span class="math inline">\(\mathbf{c}_{-i}\)</span> denote the vector of all stacks except player <span class="math inline">\(i\)</span>’s.</p></li>
+</ul>
+<p>Let <span class="math display">\[U_i(\mathbf{c})\]</span> denote the <strong>tournament utility</strong> of player <span class="math inline">\(i\)</span>, defined as their expected monetary payout given the current stack configuration.</p>
+<p>Unlike in cash games, this utility depends on relative position rather than absolute chip counts.</p>
+<section id="types-of-utility-functions" class="level3">
+<h3 class="anchored" data-anchor-id="types-of-utility-functions">Types of Utility Functions</h3>
+<ul>
+<li>Linear: <span class="math inline">\(U_i(c_i) = c_i\)</span><br>
+</li>
+<li>Payout-based (ICM-style)<br>
+</li>
+<li>Future game simulation<br>
+</li>
+<li><strong>Skill-weighted utility (used in this chapter)</strong></li>
+</ul>
+</section>
+<section id="skill-weighted-utility-model" class="level3">
+<h3 class="anchored" data-anchor-id="skill-weighted-utility-model">Skill-Weighted Utility Model</h3>
+<p>We define skill weights <span class="math inline">\(s_i &gt; 0\)</span> and model: <span class="math display">\[P_i(\text{1st}) = \frac{s_i c_i}{\sum_j s_j c_j}\]</span></p>
+<p><span class="math display">\[U_i(\mathbf{c}) = \sum_k P_i(k)\cdot \text{Payout}_k\]</span></p>
+</section>
+</section>
+<section id="running-example" class="level2">
+<h2 class="anchored" data-anchor-id="running-example">Running Example</h2>
+<p>We use a consistent example throughout the chapter.</p>
+<ul>
+<li><p>3 players<br>
+</p></li>
+<li><p>Payouts: <span class="math inline">\((100, 60, 0)\)</span><br>
+</p></li>
+<li><p>Stacks: <span class="math display">\[\mathbf{c} = (40, 35, 25)\]</span></p></li>
+<li><p>Skill weights: <span class="math display">\[s_1 = 1.3,\quad s_2 = 1.0,\quad s_3 = 0.9\]</span></p></li>
+</ul>
+<p>Compute: <span class="math display">\[\sum s_j c_j = 109.5\]</span></p>
+<p><span class="math display">\[P_1(\text{1st}) \approx 0.475\]</span></p>
+<p>Approximate: <span class="math display">\[P_1(\text{2nd}) \approx 0.35\]</span></p>
+<p>Thus: <span class="math display">\[U_1(\mathbf{c}) \approx 68.5\]</span></p>
+<section id="definition-1-nonlinear-utility-function" class="level3">
+<h3 class="anchored" data-anchor-id="definition-1-nonlinear-utility-function">Definition 1 (Nonlinear Utility Function)</h3>
+<hr>
+<p><strong>Definition.</strong> A nonlinear utility function is a function <span class="math display">\[U_i : \mathbb{R}_+^n \to \mathbb{R}\]</span> such that the change in utility from gaining chips depends on the current stack size and the stacks of other players.</p>
+<p>Formally, for <span class="math inline">\(\Delta &gt; 0\)</span>, <span class="math display">\[U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})\]</span> is not constant in <span class="math inline">\(c_i\)</span>.</p>
+<section id="explanation-of-components" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-of-components">Explanation of Components</h4>
+<ul>
+<li><span class="math inline">\(U_i(\mathbf{c})\)</span>: expected payout of player <span class="math inline">\(i\)</span><br>
+</li>
+<li><span class="math inline">\(c_i\)</span>: player <span class="math inline">\(i\)</span>’s chip stack<br>
+</li>
+<li><span class="math inline">\(\mathbf{c}_{-i}\)</span>: opponents’ stacks<br>
+</li>
+<li><span class="math inline">\(\Delta\)</span>: change in chips</li>
+</ul>
+</section>
+<section id="interpretation" class="level4">
+<h4 class="anchored" data-anchor-id="interpretation">Interpretation</h4>
+<p>In a linear system (such as a cash game), each chip has constant value: <span class="math display">\[U_i(c_i + \Delta) - U_i(c_i) = \text{constant}.\]</span></p>
+<p>In tournaments, this is not true. For example:</p>
+<ul>
+<li><p>Increasing from a short stack significantly improves survival probability</p></li>
+<li><p>Increasing an already large stack produces only a small gain in expected payout</p></li>
+</ul>
+<p>This implies diminishing marginal returns, typically expressed as <span class="math display">\[\frac{\partial^2 U_i}{\partial c_i^2} &lt; 0.\]</span></p>
+</section>
+<section id="running-example-application" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application">Running Example Application</h4>
+<p>In our 3-player setup, if Player 3 (25 chips) gains <span class="math inline">\(\Delta = 5\)</span> chips from Player 1, their utility <span class="math inline">\(U_3\)</span> increases more significantly than if Player 1 (40 chips) gained those same 5 chips. The “value” of those 5 chips is not inherent to the chips themselves, but to who receives them and their current standing.</p>
+</section>
+</section>
+<section id="definition-2-risk-premium" class="level3">
+<h3 class="anchored" data-anchor-id="definition-2-risk-premium">Definition 2 (Risk Premium)</h3>
+<hr>
+<p><strong>Definition.</strong> Let <span class="math inline">\(X\)</span> be a random variable representing a change in player <span class="math inline">\(i\)</span>’s chip stack. The risk premium <span class="math inline">\(\pi\)</span> is defined implicitly by <span class="math display">\[U_i(\mathbb{E}[c_i + X] - \pi, \mathbf{c}_{-i}) = \mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})].\]</span></p>
+<section id="explanation-of-components-1" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-of-components-1">Explanation of Components</h4>
+<ul>
+<li><span class="math inline">\(X\)</span>: random chip outcome (e.g., <span class="math inline">\(+\Delta\)</span> or <span class="math inline">\(-\Delta\)</span>)<br>
+</li>
+<li><span class="math inline">\(\mathbb{E}[c_i + X]\)</span>: expected chip stack after the gamble<br>
+</li>
+<li><span class="math inline">\(\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})]\)</span>: expected tournament utility<br>
+</li>
+<li><span class="math inline">\(\pi\)</span>: amount of chips the player would give up to avoid risk</li>
+</ul>
+</section>
+<section id="interpretation-1" class="level4">
+<h4 class="anchored" data-anchor-id="interpretation-1">Interpretation</h4>
+<p>The risk premium measures how much a player dislikes uncertainty.</p>
+<ul>
+<li>If <span class="math inline">\(\pi = 0\)</span>, the player is risk-neutral<br>
+</li>
+<li>If <span class="math inline">\(\pi &gt; 0\)</span>, the player is risk-averse</li>
+</ul>
+<p>In tournaments, risk aversion arises because losing chips can lead to elimination, while gaining chips often provides limited additional benefit.</p>
+</section>
+<section id="running-example-application-1" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application-1">Running Example Application</h4>
+<p>If Player 2 (35 chips) faces a coinflip for 10 chips against Player 3, the <span class="math inline">\(\mathbb{E}[c_2+X]\)</span> is 35 chips. However, the expected utility of that gamble is lower than <span class="math inline">\(U_2(35)\)</span>. The difference in chips, <span class="math inline">\(\pi\)</span>, represents how much Player 2 would pay to simply cancel the bet and keep their 35 chips.</p>
+</section>
+</section>
+<section id="definition-3-bubble-factor" class="level3">
+<h3 class="anchored" data-anchor-id="definition-3-bubble-factor">Definition 3 (Bubble Factor)</h3>
+<hr>
+<p><strong>Definition.</strong> For <span class="math inline">\(\Delta &gt; 0\)</span>, the bubble factor for player <span class="math inline">\(i\)</span> is <span class="math display">\[B_i(\mathbf{c}, \Delta) = \frac{U_i(c_i, \mathbf{c}_{-i}) - U_i(c_i - \Delta, \mathbf{c}_{-i})}{U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})}.\]</span></p>
+<section id="explanation-of-components-2" class="level4">
+<h4 class="anchored" data-anchor-id="explanation-of-components-2">Explanation of Components</h4>
+<p>The numerator represents the utility lost when chips are lost. The denominator represents the utility gained when chips are won.</p>
+</section>
+<section id="interpretation-2" class="level4">
+<h4 class="anchored" data-anchor-id="interpretation-2">Interpretation</h4>
+<ul>
+<li><span class="math inline">\(B_i &gt; 1\)</span>: losing chips is more costly than gaining chips is beneficial<br>
+</li>
+<li><span class="math inline">\(B_i = 1\)</span>: symmetric value (cash-game case)<br>
+</li>
+<li><span class="math inline">\(B_i \gg 1\)</span>: strong risk aversion (e.g., near payout thresholds)</li>
+</ul>
+<p>This ratio captures how tournament incentives distort decision-making.</p>
+</section>
+<section id="running-example-application-2" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application-2">Running Example Application</h4>
+<p>If Player 3 (25 chips) risks <span class="math inline">\(\Delta = 25\)</span> chips against Player 1, the numerator is <span class="math inline">\(U_3(25) - U_3(0)\)</span> (the cost of elimination). The denominator is <span class="math inline">\(U_3(50) - U_3(25)\)</span> (the gain from doubling). Since <span class="math inline">\(U_3\)</span> is concave, the numerator is larger than the denominator, resulting in <span class="math inline">\(B_3 &gt; 1\)</span>.</p>
+</section>
+</section>
+<section id="connecting-the-definitions" class="level3">
+<h3 class="anchored" data-anchor-id="connecting-the-definitions">Connecting the Definitions</h3>
+<p>These concepts are closely related.</p>
+<ul>
+<li>Nonlinear utility creates diminishing marginal returns<br>
+</li>
+<li>Diminishing returns lead to risk aversion<br>
+</li>
+<li>Risk aversion is quantified by the risk premium<br>
+</li>
+<li>The bubble factor measures the asymmetry between gains and losses</li>
+</ul>
+<p>Together, they imply that chip value depends on both stack size and tournament context.</p>
+<p>Now, let’s look at a theorem that will reinforce the main mathematical definitions:</p>
+</section>
+<section id="theorem-1-concavity-implies-risk-aversion" class="level3">
+<h3 class="anchored" data-anchor-id="theorem-1-concavity-implies-risk-aversion">Theorem 1 (Concavity Implies Risk Aversion)</h3>
+<hr>
+<p><strong>Theorem.</strong> Suppose the tournament utility function <span class="math inline">\(U_i(c_i, \mathbf{c}_{-i})\)</span> is concave in <span class="math inline">\(c_i\)</span>, i.e., <span class="math display">\[
+\frac{\partial^2 U_i}{\partial c_i^2}(\mathbf{c}) &lt; 0.
+\]</span> Let <span class="math inline">\(X\)</span> be any random variable with <span class="math inline">\(\mathbb{E}[X] = 0\)</span>. Then, <span class="math display">\[
+\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})] \leq U_i(c_i, \mathbf{c}_{-i}),
+\]</span> with strict inequality if <span class="math inline">\(X\)</span> is non-degenerate.</p>
+<hr>
+<p><strong>Proof.</strong> Since <span class="math inline">\(U_i\)</span> is concave in <span class="math inline">\(c_i\)</span>, Jensen’s Inequality implies: <span class="math display">\[
+\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})]
+\leq
+U_i(\mathbb{E}[c_i + X], \mathbf{c}_{-i}).
+\]</span></p>
+<p>Because <span class="math inline">\(\mathbb{E}[X] = 0\)</span>, we have: <span class="math display">\[
+\mathbb{E}[c_i + X] = c_i.
+\]</span></p>
+<p>Thus, <span class="math display">\[
+\mathbb{E}[U_i(c_i + X, \mathbf{c}_{-i})]
+\leq
+U_i(c_i, \mathbf{c}_{-i}).
+\]</span></p>
+<p>If <span class="math inline">\(X\)</span> has positive variance, the inequality is strict. <span class="math inline">\(\square\)</span></p>
+<hr>
+<p><strong>Interpretation.</strong></p>
+<p>This theorem formalizes risk aversion in tournament poker:</p>
+<ul>
+<li>A “fair” gamble in chips (<span class="math inline">\(\mathbb{E}[X] = 0\)</span>) reduces expected utility<br>
+</li>
+<li>Players prefer certainty over risk<br>
+</li>
+<li>This directly implies a positive risk premium: <span class="math display">\[
+\pi &gt; 0
+\]</span></li>
+</ul>
+<hr>
+<p><strong>Connection to Poker.</strong></p>
+<p>This result explains why:</p>
+<ul>
+<li>Players fold hands that are profitable in chip-EV<br>
+</li>
+<li>Bubble Factor satisfies <span class="math inline">\(B_i &gt; 1\)</span><br>
+</li>
+<li>Tournament strategy deviates from cash-game logic</li>
+</ul>
+<p>In short, concavity of <span class="math inline">\(U_i\)</span> is the mathematical reason tournament players avoid marginal gambles.</p>
+</section>
+</section>
+<section id="main-mathematical-development" class="level2">
+<h2 class="anchored" data-anchor-id="main-mathematical-development">Main Mathematical Development</h2>
+<hr>
+<section id="subsection-a-marginal-value-of-chips" class="level3">
+<h3 class="anchored" data-anchor-id="subsection-a-marginal-value-of-chips">Subsection A: Marginal Value of Chips</h3>
+<p>A central feature of tournament poker is that the value of an additional chip is not constant. Instead, it depends on both a player’s current stack and the distribution of chips across all players.</p>
+</section>
+<section id="definition-marginal-value-of-chips" class="level3">
+<h3 class="anchored" data-anchor-id="definition-marginal-value-of-chips">Definition (Marginal Value of Chips)</h3>
+<p>The <strong>marginal value of chips</strong> for player <span class="math inline">\(i\)</span> is defined as the rate at which tournament utility changes with respect to their chip stack: <span class="math display">\[\frac{\partial U_i}{\partial c_i}(\mathbf{c}).\]</span></p>
+<p>This quantity measures how much a small increase in chips improves a player’s expected payout.</p>
+<section id="running-example-application-3" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application-3">Running Example Application</h4>
+<p>Using our skill-weighted model, we can calculate that for Player 3 (<span class="math inline">\(\mathbf{c}_3=25\)</span>), the derivative <span class="math inline">\(\frac{\partial U_3}{\partial c_3}\)</span> is higher than <span class="math inline">\(\frac{\partial U_1}{\partial c_1}\)</span>. This mathematically demonstrates that Player 3 “needs” the chips more to improve their tournament outlook than the chip leader.</p>
+<hr>
+</section>
+</section>
+<section id="interpretation-of-the-derivative" class="level3">
+<h3 class="anchored" data-anchor-id="interpretation-of-the-derivative">Interpretation of the Derivative</h3>
+<ul>
+<li>If <span class="math inline">\(\frac{\partial U_i}{\partial c_i}\)</span> is large, gaining chips significantly increases expected payout<br>
+</li>
+<li>If <span class="math inline">\(\frac{\partial U_i}{\partial c_i}\)</span> is small, additional chips provide little benefit</li>
+</ul>
+<p>Thus, the derivative captures the <strong>local value of chips</strong> at a given stack size.</p>
+<hr>
+</section>
+<section id="key-property-diminishing-marginal-value" class="level3">
+<h3 class="anchored" data-anchor-id="key-property-diminishing-marginal-value">Key Property: Diminishing Marginal Value</h3>
+<p>In tournament settings, utility is typically concave in <span class="math inline">\(c_i\)</span>, meaning: <span class="math display">\[\frac{\partial^2 U_i}{\partial c_i^2}(\mathbf{c}) &lt; 0.\]</span></p>
+<p>This implies that: - The first chips a player gains are very valuable<br>
+- Each additional chip contributes less than the previous one</p>
+<section id="example-qualitative" class="level4">
+<h4 class="anchored" data-anchor-id="example-qualitative">Example (Qualitative)</h4>
+<ul>
+<li>A player with a very short stack gains substantial survival probability from doubling up<br>
+</li>
+<li>A chip leader gains relatively little from increasing an already dominant stack</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="dependence-on-stack-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="dependence-on-stack-distribution">Dependence on Stack Distribution</h3>
+<p>Unlike standard economic models, the marginal value of chips depends not only on <span class="math inline">\(c_i\)</span>, but on the entire vector <span class="math inline">\(\mathbf{c}\)</span>: <span class="math display">\[\frac{\partial U_i}{\partial c_i}(\mathbf{c}) = f(c_1, c_2, \dots, c_n).\]</span></p>
+<section id="running-example-application-4" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application-4">Running Example Application</h4>
+<p>If Player 3’s stack remains 25, but Player 2 loses chips to Player 1, Player 3’s marginal value of chips changes. Even though <span class="math inline">\(c_3\)</span> is constant, the shift in <span class="math inline">\(\mathbf{c}_{-3}\)</span> alters Player 3’s probability of laddering up to 2nd place, thus shifting their utility derivative.</p>
+<hr>
+</section>
+</section>
+<section id="discrete-approximation" class="level3">
+<h3 class="anchored" data-anchor-id="discrete-approximation">Discrete Approximation</h3>
+<p>Since chips change in discrete amounts, the marginal value is often approximated by: <span class="math display">\[U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i}),\]</span> for small <span class="math inline">\(\Delta &gt; 0\)</span>.</p>
+</section>
+<section id="relation-to-risk-and-bubble-factor" class="level3">
+<h3 class="anchored" data-anchor-id="relation-to-risk-and-bubble-factor">Relation to Risk and Bubble Factor</h3>
+<p>The marginal value of chips directly influences both risk premium and bubble factor:</p>
+<ul>
+<li>When marginal value is high (short stacks), players are incentivized to take risks<br>
+</li>
+<li>When marginal value is low (large stacks), players can apply pressure<br>
+</li>
+<li>When losing chips significantly reduces marginal utility, the bubble factor increases</li>
+</ul>
+<hr>
+</section>
+<section id="result" class="level3">
+<h3 class="anchored" data-anchor-id="result">Result</h3>
+<p>The marginal value of chips depends on the stack distribution: <span class="math display">\[\frac{\partial U_i}{\partial c_i}(\mathbf{c}) \text{ varies with both } c_i \text{ and } \mathbf{c}_{-i}.\]</span></p>
+<hr>
+</section>
+<section id="implication-for-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="implication-for-strategy">Implication for Strategy</h3>
+<p>Because marginal chip value is not constant:</p>
+<ul>
+<li>Decisions that maximize expected chips may not maximize expected payout</li>
+<li>Players must account for how chips translate into finishing probabilities</li>
+<li>Optimal play requires evaluating changes in utility, not just chip counts</li>
+</ul>
+</section>
+<section id="subsection-b-tournament-ev-vs-chip-ev" class="level3">
+<h3 class="anchored" data-anchor-id="subsection-b-tournament-ev-vs-chip-ev">Subsection B: Tournament EV vs Chip EV</h3>
+</section>
+</section>
+<section id="tournament-expected-value-vs.-chip-expected-value" class="level2">
+<h2 class="anchored" data-anchor-id="tournament-expected-value-vs.-chip-expected-value">Tournament Expected Value vs.&nbsp;Chip Expected Value</h2>
+<p>A central distinction in tournament poker is the difference between <strong>chip expected value</strong> and <strong>tournament expected value</strong>. While chip expected value measures gains and losses in chips, tournament expected value measures changes in expected payout.</p>
+<hr>
+<section id="definition-chip-expected-value" class="level3">
+<h3 class="anchored" data-anchor-id="definition-chip-expected-value">Definition (Chip Expected Value)</h3>
+<p>Consider a gamble in which player <span class="math inline">\(i\)</span> wins <span class="math inline">\(\Delta &gt; 0\)</span> chips with probability <span class="math inline">\(p\)</span> and loses <span class="math inline">\(\Delta\)</span> chips with probability <span class="math inline">\(1 - p\)</span>.</p>
+<p>The <strong>chip expected value</strong> (chip-EV) of this gamble is <span class="math display">\[\mathrm{EV}_{\text{chips}} = p \cdot \Delta + (1 - p)(-\Delta) = (2p - 1)\Delta.\]</span></p>
+<section id="interpretation-3" class="level4">
+<h4 class="anchored" data-anchor-id="interpretation-3">Interpretation</h4>
+<ul>
+<li><span class="math inline">\(\mathrm{EV}_{\text{chips}} &gt; 0\)</span>: the gamble is profitable in chips<br>
+</li>
+<li><span class="math inline">\(\mathrm{EV}_{\text{chips}} = 0\)</span>: the gamble is fair<br>
+</li>
+<li><span class="math inline">\(\mathrm{EV}_{\text{chips}} &lt; 0\)</span>: the gamble loses chips on average</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="definition-tournament-expected-value" class="level3">
+<h3 class="anchored" data-anchor-id="definition-tournament-expected-value">Definition (Tournament Expected Value)</h3>
+<p>The <strong>tournament expected value</strong> (tournament-EV) evaluates the same gamble using the utility function <span class="math inline">\(U_i\)</span>: <span class="math display">\[\mathrm{EV}_{\text{tourn}} = p \cdot U_i(c_i + \Delta, \mathbf{c}_{-i}) + (1 - p) \cdot U_i(c_i - \Delta, \mathbf{c}_{-i}) - U_i(\mathbf{c}).\]</span></p>
+<section id="running-example-application-5" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application-5">Running Example Application</h4>
+<p>Suppose Player 2 (35 chips) takes a 10-chip flip against Player 3 with <span class="math inline">\(p=0.51\)</span>. <span class="math inline">\(\mathrm{EV}_{\text{chips}} = (0.51)(10) + (0.49)(-10) = +0.2\)</span> chips. However, if we calculate <span class="math inline">\(\mathrm{EV}_{\text{tourn}}\)</span>, we might find it is negative (e.g., <span class="math inline">\(-\$0.50\)</span>) because the utility lost from dropping to 25 chips outweighs the utility gained from rising to 45 chips.</p>
+<hr>
+</section>
+</section>
+<section id="key-difference" class="level3">
+<h3 class="anchored" data-anchor-id="key-difference">Key Difference</h3>
+<p>Chip-EV assumes linear utility: <span class="math inline">\(U_i(c_i) = c_i\)</span>, while tournament-EV uses a nonlinear utility function. Because of this, <span class="math inline">\(\mathbb{E}[U_i(c_i + X)] \neq U_i(\mathbb{E}[c_i + X])\)</span>.</p>
+<hr>
+</section>
+<section id="role-of-the-bubble-factor" class="level3">
+<h3 class="anchored" data-anchor-id="role-of-the-bubble-factor">Role of the Bubble Factor</h3>
+<p>Using the bubble factor, we can rewrite the decision condition. A player should accept the gamble only if: <span class="math display">\[\frac{p}{1 - p} \geq B_i(\mathbf{c}, \Delta).\]</span></p>
+<section id="running-example-application-6" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application-6">Running Example Application</h4>
+<p>If Player 2’s <span class="math inline">\(B_2\)</span> for a 10-chip gamble is 1.2, then they need odds of <span class="math inline">\(\frac{p}{1-p} \geq 1.2\)</span>. This means <span class="math inline">\(p \geq 54.5\%\)</span>. Even though <span class="math inline">\(p=51\%\)</span> is positive chip-EV, it is a fold in tournament-EV.</p>
+</section>
+</section>
+<section id="subsection-c-all-in-decision-thresholds" class="level3">
+<h3 class="anchored" data-anchor-id="subsection-c-all-in-decision-thresholds">Subsection C: All-In Decision Thresholds</h3>
+<p>A fundamental application of tournament utility is determining whether a player should accept an all-in gamble.</p>
+<hr>
+</section>
+<section id="setup" class="level3">
+<h3 class="anchored" data-anchor-id="setup">Setup</h3>
+<p>Consider a binary gamble faced by player <span class="math inline">\(i\)</span>: - With probability <span class="math inline">\(p\)</span>, player <span class="math inline">\(i\)</span> wins <span class="math inline">\(\Delta &gt; 0\)</span> chips - With probability <span class="math inline">\(1 - p\)</span>, player <span class="math inline">\(i\)</span> loses <span class="math inline">\(\Delta\)</span> chips</p>
+<p>Let <span class="math inline">\(\mathbf{c}_{-i}\)</span> denote the fixed chip stacks of all other players.</p>
+<hr>
+</section>
+<section id="tournament-decision-condition" class="level3">
+<h3 class="anchored" data-anchor-id="tournament-decision-condition">Tournament Decision Condition</h3>
+<p>Similar to the previous section, we know the player should accept the gamble if and only if <span class="math inline">\(\mathrm{EV}_{\text{tourn}} \geq 0\)</span>.</p>
+<hr>
+</section>
+<section id="solving-for-the-critical-probability" class="level3">
+<h3 class="anchored" data-anchor-id="solving-for-the-critical-probability">Solving for the Critical Probability</h3>
+<p>Now, we derive the decision condition from the previous section.</p>
+<p>We begin with the tournament expected value condition:</p>
+<p><span class="math display">\[
+p \cdot U_i(c_i + \Delta, \mathbf{c}_{-i}) + (1 - p)\cdot U_i(c_i - \Delta, \mathbf{c}_{-i}) \geq U_i(\mathbf{c})
+\]</span></p>
+<p>Rewriting by subtracting <span class="math inline">\(U_i(\mathbf{c})\)</span> from both sides:</p>
+<p><span class="math display">\[
+p \big(U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})\big)
+\geq
+(1 - p)\big(U_i(c_i, \mathbf{c}_{-i}) - U_i(c_i - \Delta, \mathbf{c}_{-i})\big)
+\]</span></p>
+<p>Dividing both sides by <span class="math inline">\(1 - p\)</span> (assuming <span class="math inline">\(p &lt; 1\)</span>):</p>
+<p><span class="math display">\[
+\frac{p}{1 - p}
+\geq
+\frac{U_i(c_i, \mathbf{c}_{-i}) - U_i(c_i - \Delta, \mathbf{c}_{-i})}
+{U_i(c_i + \Delta, \mathbf{c}_{-i}) - U_i(c_i, \mathbf{c}_{-i})}
+\]</span></p>
+<p>Recognizing the bubble factor:</p>
+<p><span class="math display">\[
+\frac{p}{1 - p} \geq B_i(\mathbf{c}, \Delta)
+\]</span></p>
+<p>Solving for <span class="math inline">\(p\)</span>:</p>
+<p><span class="math display">\[
+p \geq \frac{B_i(\mathbf{c}, \Delta)}{1 + B_i(\mathbf{c}, \Delta)}
+\]</span></p>
+<p>This expression gives the minimum probability of winning required for a gamble to be profitable in tournament expected value.</p>
+<section id="running-example-application-7" class="level4">
+<h4 class="anchored" data-anchor-id="running-example-application-7">Running Example Application</h4>
+<p>For Player 3 (25 chips) facing an all-in for their whole stack, if their Bubble Factor <span class="math inline">\(B_3\)</span> is 1.1, their critical probability is <span class="math inline">\(p \geq 1.1/2.1 \approx 52.4\%\)</span>. Any hand with equity less than 52.4% must be folded, even if the pot odds suggest a call in a cash game.</p>
+<hr>
+</section>
+</section>
+<section id="strategic-meaning" class="level3">
+<h3 class="anchored" data-anchor-id="strategic-meaning">Strategic Meaning</h3>
+<p>This result formalizes how tournament incentives distort standard pot-odds reasoning. As a result, players near payout thresholds must demand significantly better odds than in cash games.</p>
+<hr>
+</section>
+<section id="insight" class="level3">
+<h3 class="anchored" data-anchor-id="insight">Insight</h3>
+<p>The bubble factor acts as a multiplier on required equity: <span class="math display">\[\text{Required Equity} = \frac{B_i}{1 + B_i}.\]</span></p>
+</section>
+</section>
+<section id="poker-connection" class="level2">
+<h2 class="anchored" data-anchor-id="poker-connection">Poker Connection</h2>
+<p>The mathematical framework developed in this chapter directly explains several fundamental features of tournament poker strategy.</p>
+<section id="tournament-decisions-and-stack-pressure" class="level3">
+<h3 class="anchored" data-anchor-id="tournament-decisions-and-stack-pressure">Tournament Decisions and Stack Pressure</h3>
+<p>The concept of nonlinear utility explains why identical chip situations can lead to different decisions. - <strong>Short stacks</strong> (like Player 3) have high marginal utility for chips but must balance this against a high Bubble Factor regarding elimination. - <strong>Medium stacks</strong> (like Player 2) often face the highest Bubble Factors, as they have the most “to lose” by falling into the short-stack or eliminated category. - <strong>Chip leaders</strong> (like Player 1) have the lowest marginal utility but can use their stack to force high-Bubble-Factor decisions on others.</p>
+</section>
+<section id="all-in-decisions-as-utility-thresholds" class="level3">
+<h3 class="anchored" data-anchor-id="all-in-decisions-as-utility-thresholds">All-In Decisions as Utility Thresholds</h3>
+<p>The all-in decision framework derived earlier translates directly into real poker situations. Instead of comparing raw chip equity, players must compare <span class="math inline">\(\mathrm{EV}_{\text{tourn}}\)</span>.</p>
+</section>
+<section id="key-insight" class="level3">
+<h3 class="anchored" data-anchor-id="key-insight">Key Insight</h3>
+<p>Tournament poker cannot be fully understood through chip arithmetic alone. Instead, every decision reflects changes in a nonlinear utility landscape shaped by stack sizes, opponent distributions, and payout structure.</p>
+</section>
+</section>
+</section>
+<section id="beyond-poker" class="level1">
+<h1>Beyond Poker</h1>
+<hr>
+<p>The mathematical frameworks developed in this chapter—specifically the <strong>Bubble Factor</strong> and <strong>Diminishing Marginal Utility</strong>—are not unique to card games. They are central to any system where resources are finite, outcomes are discrete, and “elimination” carries a terminal cost.</p>
+<section id="economics-the-logic-of-insurance" class="level2">
+<h2 class="anchored" data-anchor-id="economics-the-logic-of-insurance">1. Economics: The Logic of Insurance</h2>
+<p>In classical economics, the utility of wealth is modeled as a concave function. For an individual, the “cost” of losing $50,000 (bankruptcy) is mathematically greater than the “benefit” of gaining $50,000.</p>
+<section id="calculation-the-risk-premium-in-practice" class="level3">
+<h3 class="anchored" data-anchor-id="calculation-the-risk-premium-in-practice">Calculation: The Risk Premium in Practice</h3>
+<p>Imagine an individual with a net worth of <strong>$100,000</strong> and a logarithmic utility function <span class="math inline">\(U(W) = \ln(W)\)</span>. They face a <strong>1%</strong> chance of a catastrophic <strong>$80,000</strong> loss (e.g., a house fire).</p>
+<p><strong>Step 1: Calculate Expected Utility without Insurance</strong> <span class="math display">\[E[U] = (0.99 \cdot \ln(100,000)) + (0.01 \cdot \ln(20,000))\]</span> <span class="math display">\[E[U] = (0.99 \cdot 11.5129) + (0.01 \cdot 9.9035) \approx 11.4968\]</span></p>
+<p><strong>Step 2: Find the Certainty Equivalent (CE)</strong> The Certainty Equivalent is the amount of guaranteed wealth that provides the same utility as the risky gamble: <span class="math display">\[\ln(CE) = 11.4968 \implies CE = e^{11.4968} \approx \$98,400\]</span></p>
+<p><strong>Step 3: Determine the Maximum Premium</strong> The individual is indifferent between facing the risk and having **<span class="math inline">\(98,400** for sure. Therefore, the maximum they would pay for insurance is:\)</span><span class="math inline">\(\$100,000 - \$98,400 = \$1,600\)</span>$</p>
+<p><strong>The Result:</strong> Even though the <strong>Expected Loss</strong> is only <strong>$800</strong> (<span class="math inline">\(80,000 \times 0.01\)</span>), the individual is willing to pay up to <strong>$1,600</strong>. The extra **<span class="math inline">\(800** is the **Risk Premium** (\)</span>$), which is mathematically identical to the “Tournament-EV” tax a poker player pays to avoid the bubble.</p>
+</section>
+</section>
+<section id="biology-risk-sensitive-foraging" class="level2">
+<h2 class="anchored" data-anchor-id="biology-risk-sensitive-foraging">2. Biology: Risk-Sensitive Foraging</h2>
+<p>In evolutionary biology, an animal’s survival follows a tournament structure. Biologists use the <strong>Z-Score Model of Starvation</strong> to predict when animals will take risks.</p>
+<p><span class="math display">\[Z = \frac{E[R] - T}{\sigma_R}\]</span></p>
+<p>Where: - <span class="math inline">\(E[R]\)</span> = Expected daily calorie reward - <span class="math inline">\(T\)</span> = Starvation threshold (The “Elimination” point) - <span class="math inline">\(\sigma_R\)</span> = Variance of the food source</p>
+<section id="the-short-stack-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="the-short-stack-strategy">The “Short Stack” Strategy</h3>
+<p>If a bird needs <strong>500 calories</strong> to survive the night but only has access to a guaranteed source of <strong>400 calories</strong>, its survival probability is 0%.</p>
+<p>In this “Short Stack” situation, the animal will switch from a low-variance diet to a <strong>high-variance</strong> diet (e.g., hunting dangerous prey), even if the expected calorie count is lower. This is the biological equivalent of a short stack “shoving” all-in: when the status quo leads to certain elimination, the marginal utility of variance becomes positive.</p>
+</section>
+</section>
+<section id="comparative-framework" class="level2">
+<h2 class="anchored" data-anchor-id="comparative-framework">3. Comparative Framework</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Concept</th>
+<th style="text-align: left;">Poker Tournament</th>
+<th style="text-align: left;">Personal Finance</th>
+<th style="text-align: left;">Biology (Foraging)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>“Chips”</strong></td>
+<td style="text-align: left;">Tournament Chips</td>
+<td style="text-align: left;">Net Worth / Cash</td>
+<td style="text-align: left;">Calories / Fat Reserves</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>“Elimination”</strong></td>
+<td style="text-align: left;">Busting the Tourney</td>
+<td style="text-align: left;">Bankruptcy / Poverty</td>
+<td style="text-align: left;">Starvation / Death</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>“Payout”</strong></td>
+<td style="text-align: left;">Prize Money</td>
+<td style="text-align: left;">Retirement / Security</td>
+<td style="text-align: left;">Reproduction / Survival</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>“Bubble Factor”</strong></td>
+<td style="text-align: left;">Payout Jump-points</td>
+<td style="text-align: left;">Insurance Needs</td>
+<td style="text-align: left;">Winter / Scarcity</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="homework-problems" class="level1">
+<h1>Homework Problems</h1>
+<hr>
+<p>These problems explore the theoretical foundations of nonlinear utility and risk independently of the specific running examples used in the text.</p>
+<section id="conceptual-the-winner-take-all-paradox" class="level5">
+<h5 class="anchored" data-anchor-id="conceptual-the-winner-take-all-paradox">1. Conceptual: The “Winner-Take-All” Paradox</h5>
+<p>Consider a “Winner-Take-All” tournament structure where 100% of the prize pool is awarded to 1st place and $0 to all other positions. * <strong>Problem:</strong> Mathematically demonstrate whether the utility function <span class="math inline">\(U_i(c_i)\)</span> in this specific tournament structure is linear or nonlinear. * <strong>Discussion:</strong> If <span class="math inline">\(U_i\)</span> is linear, what does that imply about a player’s <strong>Bubble Factor</strong> and their optimal strategy compared to a standard cash game?</p>
+</section>
+<section id="computational-the-sunk-cost-of-elimination" class="level5">
+<h5 class="anchored" data-anchor-id="computational-the-sunk-cost-of-elimination">2. Computational: The Sunk Cost of Elimination</h5>
+<p>A player is on the direct “bubble” of a tournament (the next player eliminated receives $0, while everyone remaining is guaranteed at least $1,000). * <strong>Scenario:</strong> The player has 10 chips and faces an all-in bet for their entire stack. * Utility if they fold: <span class="math inline">\(U(10\text{ chips}) = \$1,050\)</span> * Utility if they win (20 chips): <span class="math inline">\(U(20\text{ chips}) = \$1,100\)</span> * Utility if they lose (0 chips): <span class="math inline">\(U(0\text{ chips}) = \$0\)</span> * <strong>Task:</strong> Calculate the <strong>Bubble Factor</strong> (<span class="math inline">\(B_i\)</span>) for this decision. What is the minimum equity (<span class="math inline">\(p\)</span>) required for this player to justify a call?</p>
+</section>
+<section id="proof-concavity-and-the-risk-premium" class="level5">
+<h5 class="anchored" data-anchor-id="proof-concavity-and-the-risk-premium">3. Proof: Concavity and the Risk Premium</h5>
+<p>Assume a player has a utility function defined by the square root of their chip stack: <span class="math inline">\(U(c) = \sqrt{c}\)</span>. * <strong>Task:</strong> 1. Prove that this utility function is concave by calculating the second derivative <span class="math inline">\(U''(c)\)</span>. 2. If a player with 100 chips is offered a fair coinflip (<span class="math inline">\(p=0.5\)</span>) for 64 chips (resulting in either 36 or 164 chips), calculate the <strong>Risk Premium</strong> (<span class="math inline">\(\pi\)</span>) they would be willing to pay in chips to avoid this gamble entirely.</p>
+</section>
+<section id="interpretation-the-big-stack-utility-shift" class="level5">
+<h5 class="anchored" data-anchor-id="interpretation-the-big-stack-utility-shift">4. Interpretation: The “Big Stack” Utility Shift</h5>
+<p>In many tournament models, a player’s utility increases sharply when moving from a “short stack” to a “medium stack,” but the rate of increase plateaus once they become the dominant “chip leader.” * <strong>Task:</strong> Sketch a qualitative graph of <span class="math inline">\(U(c)\)</span> where the x-axis represents chips and the y-axis represents tournament utility. * <strong>Question:</strong> On your graph, identify the region where the <strong>Marginal Value of Chips</strong> is highest. Why does this region usually correspond to the “survival” phase of a tournament?</p>
+</section>
+<section id="beyond-poker-insurance-and-certainty-equivalents" class="level5">
+<h5 class="anchored" data-anchor-id="beyond-poker-insurance-and-certainty-equivalents">5. Beyond Poker: Insurance and Certainty Equivalents</h5>
+<p>An individual has a net worth of $100,000. There is a 1% chance of a disaster that would reduce their net worth to $20,000 (a loss of $80,000). * <strong>Scenario:</strong> An insurance company offers a policy covering the full $80,000 loss for a premium of $1,200. * <strong>Task:</strong> 1. Calculate the <strong>Expected Value</strong> (in raw dollars) of buying the insurance. Is the dollar-EV positive or negative? 2. Using a logarithmic utility function <span class="math inline">\(U(w) = \ln(w)\)</span>, determine if the individual should buy the insurance based on expected utility. 3. Explain how this result relates to the <strong>Tournament-EV</strong> concepts discussed in this chapter.</p>
+</section>
+<section id="ai-collaboration-log" class="level2">
+<h2 class="anchored" data-anchor-id="ai-collaboration-log">AI Collaboration Log</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Task</th>
+<th>How AI Was Used</th>
+<th>What the Group Revised or Verified</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Definitions</td>
+<td>Asked AI to draft candidate definitions, and explain results and insight</td>
+<td>Reviewed wording and checked against book notation</td>
+</tr>
+<tr class="even">
+<td>Definition expansion</td>
+<td>Asked AI to expand on definitions and draft interpretations</td>
+<td>Verified notation and correctness</td>
+</tr>
+<tr class="odd">
+<td>Additional subsection</td>
+<td>Drafted additional subsection</td>
+<td>Verified notation and correctness</td>
+</tr>
+<tr class="even">
+<td>Motivating Example</td>
+<td>Drafted motivating example</td>
+<td>Reviewed wording and logic in the chapter’s context</td>
+</tr>
+<tr class="odd">
+<td>Running Example</td>
+<td>Asked AI to create a running example throughout the chapter</td>
+<td>Reviewed wording and notation</td>
+</tr>
+<tr class="even">
+<td>Beyond Poker</td>
+<td>Drafted Beyond Poker examples</td>
+<td>Verified logic and notation</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
